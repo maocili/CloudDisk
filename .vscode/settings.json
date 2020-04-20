@@ -1,0 +1,13 @@
+{
+  // "editor.codeActionsOnSave": true,
+  "go.autocompleteUnimportedPackages": true,
+  "go.gopath": "F:/GoWork",
+  "go.lintFlags": [
+    "-min_confidence=.8",
+    "--disable=all",
+    "--enable=errcheck"
+  ],
+  "go.vetOnSave": "off",
+  "go.docsTool": "gogetdoc",
+  "go.formatTool": "gofmt"
+}
