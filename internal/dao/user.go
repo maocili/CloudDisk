@@ -43,3 +43,8 @@ func IsexistUsername(username string) (bool, error) {
 	has_account, err := mysql.DB.Table(&userinfo).Where("username = ?", username).Exist()
 	return has_account, err
 }
+
+func Login(userinfo model.UserInfo) (bool, error) {
+	has, err := mysql.DB.SQL("select * from user_info where username = ? and uid = ?  and password = ?", userinfo.Username, userinfo.Uid, userinfo.Password).Exist()
+	return has, err
+}

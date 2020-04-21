@@ -20,6 +20,14 @@ func DiskRouter(r *gin.Engine) {
 		user.POST("/login", serve.Sigin)
 		user.POST("/register", serve.Register)
 		user.POST("/isexist", serve.Isexist)
+		user.GET("/info", serve.GetInfo)
+		user.GET("/avatar", serve.Avatar)
+
+	}
+
+	file := r.Group("/file")
+	{
+		file.POST("/upload", serve.Upload)
 	}
 
 	// sms := r.Group("/sms")
