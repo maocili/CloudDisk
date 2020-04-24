@@ -52,7 +52,7 @@ func Sigin(c *gin.Context) {
 
 	if isLogin {
 		token := tools.Sha1(time.Now().String() + userinfo.Uid)
-		rds.SaveToken(userinfo.Username, token)
+		rds.SaveToken(userinfo.Uid, userinfo.Username, token)
 		c.SetCookie("token", token, 3600, "/", "localhost", false, true)
 
 		response.Code = 20000
