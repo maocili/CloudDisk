@@ -2,6 +2,7 @@ package main
 
 import (
 	"CloudDisk/internal/router"
+	"CloudDisk/tools/ini"
 	"fmt"
 	"io"
 	"log"
@@ -30,8 +31,10 @@ func disk() http.Handler {
 
 func main() {
 
+	cfg := ini.GetSectionMap("server")
+
 	serverDisk := &http.Server{
-		Addr:         ":9000",
+		Addr:         ":" + cfg["port"],
 		Handler:      disk(),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

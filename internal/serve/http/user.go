@@ -3,8 +3,10 @@ package serve
 import (
 	"CloudDisk/internal/dao"
 	"CloudDisk/internal/model"
+	"CloudDisk/internal/rds"
 	"CloudDisk/tools"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +24,7 @@ type registerInfo struct {
 
 func Sigin(c *gin.Context) {
 	var sigin siginInfo
+
 	var response model.ResponseBody
 
 	defer c.Abort()
@@ -33,10 +36,38 @@ func Sigin(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	userinfo := model.UserInfo{
+		Uid:      tools.GenerateUID(sigin.Username),
+		Username: sigin.Username,
+	}
+	userinfo.Password = tools.MakePasswd(sigin.PassWord, userinfo.Uid)
 
-	response.Code = 20000
-	response.Msg = sigin.Username + ":" + sigin.PassWord
-	c.JSON(http.StatusOK, response)
+	isLogin, err := dao.Login(userinfo)
+	if err != nil {
+		response.Code = 20001
+		response.Msg = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if isLogin {
+		token := tools.Sha1(time.Now().String() + userinfo.Uid)
+		rds.SaveToken(userinfo.Uid, userinfo.Username, token)
+		c.SetCookie("token", token, 3600, "/", "localhost", false, true)
+
+		response.Code = 20000
+		response.Msg = "成功"
+		response.Data = map[string]string{"SET_TOKEN": token}
+
+		c.JSON(http.StatusOK, response)
+		return
+	} else {
+		response.Code = 20002
+		response.Msg = "失败"
+		c.JSON(http.StatusForbidden, response)
+		return
+	}
+
 }
 
 func Register(c *gin.Context) {
@@ -107,5 +138,25 @@ func Isexist(c *gin.Context) {
 	response.Code = 20000
 	c.JSONP(http.StatusOK, response)
 	return
+}
 
+func GetInfo(c *gin.Context) {
+
+	token := c.Query("token")
+
+	infoData := map[string]string{
+		"name":   token,
+		"avatar": "123",
+	}
+	response := model.ResponseBody{
+		Code: 20000,
+		Data: infoData,
+	}
+	c.JSON(http.StatusOK, response)
+}
+
+func Avatar(c *gin.Context) {
+	// imageName := c.Query("imageName")
+	c.File("./others/avatar.gif")
+	return
 }

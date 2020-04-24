@@ -1,6 +1,7 @@
 package router
 
 import (
+	"CloudDisk/internal/middleware"
 	serve "CloudDisk/internal/serve/http"
 	"net/http"
 
@@ -20,13 +21,17 @@ func DiskRouter(r *gin.Engine) {
 		user.POST("/login", serve.Sigin)
 		user.POST("/register", serve.Register)
 		user.POST("/isexist", serve.Isexist)
+		user.GET("/info", serve.GetInfo)
+		user.GET("/avatar", serve.Avatar)
+
 	}
 
-	// sms := r.Group("/sms")
-	// {
-	// 	sms.POST("/sendcode", server.SendCode)
-	// }
-	// if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-	// 	v.RegisterValidation("phonenumber", vali.ValidatorPhoneNumber)
-	// }
+	file := r.Group("/file").Use(middleware.VailToken())
+	{
+		file.POST("/upload", serve.Upload)
+		file.POST("/chunk/init", serve.UploadInit)
+		file.POST("/chunk/upload", serve.ChunkUpload)
+		file.POST("/chunk/finish", serve.FinishUploadHandler)
+	}
+
 }
