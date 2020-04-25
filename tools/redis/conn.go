@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/garyburd/redigo/redis"
+	// "github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 )
 
 var (

@@ -3,7 +3,7 @@ package rds
 import (
 	rPool "CloudDisk/tools/redis"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 )
 
 func SaveToken(uid, username, token string) {
