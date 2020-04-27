@@ -42,6 +42,10 @@ func init() {
 		log.Print(err.Error())
 	}
 
+	if err = DB.Sync2(new(model.FolderPath)); err != nil {
+		log.Print(err.Error())
+	}
+
 }
 
 func DBConn() *xorm.Engine {
