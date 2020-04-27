@@ -108,7 +108,7 @@ func UploadInit(c *gin.Context) {
 			Uid:      uid,
 			FileSha1: initinfo.FileHash,
 			FileName: initinfo.FileName,
-			UserPath: initinfo.FilePath,
+			PathId:   initinfo.FilePath,
 		}
 
 		if err := dao.AddUserFile(userFile); err != nil {
@@ -204,25 +204,7 @@ func FinishUploadHandler(c *gin.Context) {
 	}
 	completeInfo.Token, _ = c.Cookie("token")
 
-	// filehash, err := rds.QueryUploadIdHash(completeInfo.UploadId)
-	// if err != nil || filehash == "" {
-	// 	response.Code = 20001
-	// 	response.Msg = "Hash:" + "Uploadid不存在"
-	// 	response.Data = completeInfo
-	// 	c.JSON(http.StatusBadRequest, response)
-	// 	c.Abort()
-	// 	return
-	// }
-
-	// filesize, err := rds.QueryUploadIdSize(completeInfo.UploadId)
-	// if err != nil {
-	// 	response.Code = 20001
-	// 	response.Msg = "Size:" + err.Error()
-	// 	response.Data = completeInfo
-	// 	c.JSON(http.StatusBadRequest, response)
-	// 	c.Abort()
-	// 	return
-	// }
+	// 获取文件状态，hash，文件大小
 	uploadIdstatus, filehash, filesize, err := rds.QueryUploadStatus(completeInfo.UploadId)
 	if err != nil || filehash == "" {
 		response.Code = 20001
@@ -266,7 +248,7 @@ func FinishUploadHandler(c *gin.Context) {
 		Uid:      uid,
 		FileSha1: filehash,
 		FileName: completeInfo.FileName,
-		UserPath: completeInfo.FilePath,
+		PathId:   completeInfo.FilePath,
 	}
 
 	if err := dao.AddUserFile(userFile); err != nil {
@@ -284,5 +266,4 @@ func FinishUploadHandler(c *gin.Context) {
 	response.Msg = completeInfo.FileName + "上传完成"
 	// response.Data = completeInfo
 	c.JSON(http.StatusOK, response)
-
 }

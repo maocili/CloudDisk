@@ -33,5 +33,11 @@ func DiskRouter(r *gin.Engine) {
 		file.POST("/chunk/upload", serve.ChunkUpload)
 		file.POST("/chunk/finish", serve.FinishUploadHandler)
 	}
+	r.GET("/download", serve.Download)
+
+	folder := r.Group("folder").Use(middleware.VailToken())
+	{
+		folder.POST("/list", serve.GetFolderList)
+	}
 
 }
