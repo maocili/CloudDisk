@@ -67,6 +67,46 @@ func DeleteFile(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+type addFolder struct {
+	Uid        string
+	Zones      string `json:"zones"`
+	FolderName string `json:"folderName"`
+}
+
+func AddFolder(c *gin.Context) {
+	var newFolder addFolder
+	var response model.ResponseBody
+
+	if err := c.ShouldBindJSON(&newFolder); err != nil {
+		response.Code = 20001
+		response.Msg = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		c.Abort()
+		return
+	}
+	token, _ := c.Cookie("token")
+	newFolder.Uid, _ = rds.QueryTokenUid(token)
+
+	folder := model.FolderPath{
+		Uid:        newFolder.Uid,
+		FolderName: newFolder.FolderName,
+		PrefixPath: newFolder.Zones,
+	}
+	folder.PathId = tools.Sha1(folder.FolderName + folder.PrefixPath + folder.Uid)
+
+	if err := dao.AddFolder(folder); err != nil {
+		response.Code = 20001
+		response.Msg = err.Error()
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Code = 20000
+	response.Msg = folder.FolderName + "新建成功"
+	c.JSON(http.StatusOK, response)
+	return
+}
+
 func Download(c *gin.Context) {
 	filehash := c.Query("filehash")
 	token, _ := c.Cookie("token")

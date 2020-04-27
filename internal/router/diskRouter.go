@@ -39,6 +39,7 @@ func DiskRouter(r *gin.Engine) {
 	folder := r.Group("folder").Use(middleware.VailToken())
 	{
 		folder.POST("/list", serve.GetFolderList)
+		folder.POST("/add", serve.AddFolder)
 	}
 
 }

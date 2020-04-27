@@ -2,7 +2,6 @@ package dao
 
 import (
 	"CloudDisk/internal/model"
-	"CloudDisk/tools"
 	"CloudDisk/tools/mysql"
 	"errors"
 
@@ -18,9 +17,10 @@ func GetFolderList(uid string, prefixPath string) ([]model.FolderPath, error) {
 	return folderPath, err
 }
 
+//新建文件夹
 func AddFolder(folder model.FolderPath) error {
 
-	folder.PathId = tools.Sha1(folder.FolderName + folder.PrefixPath + folder.Uid)
+	// folder.PathId = tools.Sha1(folder.FolderName + folder.PrefixPath + folder.Uid)
 
 	_, err := mysql.DB.Transaction(func(session *xorm.Session) (interface{}, error) {
 

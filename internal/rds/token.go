@@ -28,6 +28,7 @@ func QueryToken(token string) (string, error) {
 	return data, nil
 }
 
+// 根据token查询redis中的uid
 func QueryTokenUid(token string) (string, error) {
 	rPool := rPool.RedisPool().Get()
 	defer rPool.Close()
