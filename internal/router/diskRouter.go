@@ -29,6 +29,7 @@ func DiskRouter(r *gin.Engine) {
 	file := r.Group("/file").Use(middleware.VailToken())
 	{
 		file.POST("/upload", serve.Upload)
+		file.POST("/delete", serve.DeleteFile)
 		file.POST("/chunk/init", serve.UploadInit)
 		file.POST("/chunk/upload", serve.ChunkUpload)
 		file.POST("/chunk/finish", serve.FinishUploadHandler)

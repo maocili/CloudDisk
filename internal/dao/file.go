@@ -3,7 +3,10 @@ package dao
 import (
 	"CloudDisk/internal/model"
 	"CloudDisk/tools/mysql"
+	"errors"
 	"fmt"
+
+	"github.com/go-xorm/xorm"
 )
 
 func NewFile(filedata model.FileData) error {
@@ -21,10 +24,51 @@ func AddUserFile(userfile model.UserFile) error {
 	return nil
 }
 
+func DeleteFile(zones model.Zones) error {
+
+	_, err := mysql.DB.Transaction(func(session *xorm.Session) (interface{}, error) {
+
+		//检查uid + 路径是否存在
+		has, err := session.Exist(&model.UserFile{
+			FileSha1: zones.Zones,
+			Uid:      zones.Uid,
+		})
+		switch {
+		case has == false:
+			return nil, errors.New("文件不存在")
+		case err != nil:
+			return nil, err
+		}
+
+		affected, err := session.Where("uid = ? and file_sha1 = ?", zones.Uid, zones.Zones).Delete(&model.UserFile{})
+		return affected, err
+	})
+	return err
+}
+
 func IsexistFileHash(filehash string) (bool, error) {
 	has, err := mysql.DB.Exist(&model.FileData{
 		FileSha1: filehash,
 	})
+
+	return has, err
+}
+
+func IsexistUserFile(zones model.Zones) (bool, error) {
+	has, err := mysql.DB.Exist(&model.UserFile{
+		Uid:      zones.Uid,
+		FileSha1: zones.Zones,
+	})
+
+	return has, err
+}
+
+func IsexistUserFolder(zones model.Zones) (bool, error) {
+	has, err := mysql.DB.Exist(&model.FolderPath{
+		Uid:    zones.Uid,
+		PathId: zones.Zones,
+	})
+
 	return has, err
 }
 

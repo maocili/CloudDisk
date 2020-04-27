@@ -37,3 +37,26 @@ func GetTreeList(zones model.Zones) ([]model.TreeList, error) {
 
 	return treeData, nil
 }
+
+// 删除Zones 文件或文件夹
+func DeleteZones(zones model.Zones) error {
+	isFile, err := dao.IsexistUserFile(zones)
+	if err != nil {
+		return err
+	}
+	isFolder, err := dao.IsexistUserFolder(zones)
+	if err != nil {
+		return err
+	}
+	switch {
+	case isFile == true:
+		// 删除用户文件
+		return dao.DeleteFile(zones)
+	case isFolder == true:
+		// 删除文件夹
+		return dao.DeleteFolder(zones)
+	}
+
+	return nil
+
+}

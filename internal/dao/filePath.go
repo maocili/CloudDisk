@@ -44,3 +44,29 @@ func AddFolder(folder model.FolderPath) error {
 	}
 	return nil
 }
+
+func DeleteFolder(zones model.Zones) error {
+
+	if zones.Zones == "root" {
+		return errors.New("无法删除root")
+	}
+
+	_, err := mysql.DB.Transaction(func(session *xorm.Session) (interface{}, error) {
+
+		//检查uid + 路径是否存在
+		has, err := session.Exist(&model.FolderPath{
+			Uid:    zones.Uid,
+			PathId: zones.Zones,
+		})
+		switch {
+		case has == false:
+			return nil, errors.New("文件夹不存在")
+		case err != nil:
+			return nil, err
+		}
+
+		affected, err := session.Where("uid = ? and path_id = ?", zones.Uid, zones.Zones).Delete(&model.FolderPath{})
+		return affected, err
+	})
+	return err
+}

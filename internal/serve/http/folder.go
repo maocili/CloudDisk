@@ -39,6 +39,34 @@ func GetFolderList(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func DeleteFile(c *gin.Context) {
+	var zones model.Zones
+	var response model.ResponseBody
+
+	err := c.ShouldBindJSON(&zones)
+	if err != nil {
+		response.Code = 20001
+		response.Msg = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	token, err := c.Cookie("token")
+	zones.Uid, _ = rds.QueryTokenUid(token)
+
+	//删除文件夹或文件
+	err = folder.DeleteZones(zones)
+	if err != nil {
+		response.Code = 20001
+		response.Msg = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response.Code = 20000
+	response.Msg = "删除成功"
+	c.JSON(http.StatusOK, response)
+}
+
 func Download(c *gin.Context) {
 	filehash := c.Query("filehash")
 	token, _ := c.Cookie("token")

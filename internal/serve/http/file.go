@@ -132,7 +132,7 @@ func UploadInit(c *gin.Context) {
 
 	multipart := multiPart{
 		UploadId:   initinfo.Token + fmt.Sprint(time.Now().UnixNano()),
-		ChunkSize:  5 * 1024 * 1024,
+		ChunkSize:  5 * 1024 * 1024, //5Mb 根据前端调整
 		ChunkCount: int(math.Ceil(float64(float64(initinfo.FileSize) / float64(5*1024*1024)))),
 	}
 
