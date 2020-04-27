@@ -28,6 +28,15 @@ func Signup(userinfo model.UserInfo) error {
 			println(err.Error())
 			return nil, err
 		}
+		initfolder := model.FolderPath{
+			Uid:        userinfo.Uid,
+			PathId:     "root",
+			FolderName: "root",
+		}
+		if _, err := session.Insert(&initfolder); err != nil {
+			println(err.Error())
+			return nil, err
+		}
 
 		return nil, nil
 	})
