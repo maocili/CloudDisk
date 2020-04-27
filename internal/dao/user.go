@@ -28,6 +28,8 @@ func Signup(userinfo model.UserInfo) error {
 			println(err.Error())
 			return nil, err
 		}
+
+		// 初始化目录，新增一个root跟目录
 		initfolder := model.FolderPath{
 			Uid:        userinfo.Uid,
 			PathId:     "root",
