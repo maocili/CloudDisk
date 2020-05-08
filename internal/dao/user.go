@@ -59,3 +59,9 @@ func Login(userinfo model.UserInfo) (bool, error) {
 	has, err := mysql.DB.SQL("select * from user_info where username = ? and uid = ?  and password = ?", userinfo.Username, userinfo.Uid, userinfo.Password).Exist()
 	return has, err
 }
+
+func UserCount() int64 {
+	user := model.UserInfo{}
+	userCount, _ := mysql.DB.Count(&user)
+	return userCount
+}

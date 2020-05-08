@@ -9,8 +9,10 @@ import (
 )
 
 func DiskRouter(r *gin.Engine) {
-	r.GET("/ping", func(context *gin.Context) {
-		context.JSONP(http.StatusOK, gin.H{
+	r.GET("/ping", func(c *gin.Context) {
+		// token := "19b20317d3e081edd351ea3b0b36ef5f80da49d3"
+		// c.SetCookie("token", token, 3600, "/", "127.0.0.1", false, true)
+		c.JSONP(http.StatusOK, gin.H{
 			"code": 20000,
 			"msg":  "pong",
 		})
@@ -23,6 +25,7 @@ func DiskRouter(r *gin.Engine) {
 		user.POST("/isexist", serve.Isexist)
 		user.GET("/info", serve.GetInfo)
 		user.GET("/avatar", serve.Avatar)
+		user.POST("/logout", serve.Logout)
 
 	}
 
@@ -41,5 +44,7 @@ func DiskRouter(r *gin.Engine) {
 		folder.POST("/list", serve.GetFolderList)
 		folder.POST("/add", serve.AddFolder)
 	}
+
+	r.GET("count", serve.Count)
 
 }
